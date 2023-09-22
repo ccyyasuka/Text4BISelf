@@ -1,22 +1,8 @@
-import React, { useMemo, useState, useEffect, ReactNode } from "react";
-
-import ReactDOM from "react-dom";
+import React, { useMemo, useState, useEffect } from "react";
 import { Spin } from "antd";
 import { getInsights, InsightsResult } from "@antv/ava";
 import { InsightCard } from "@antv/ava-react";
 import { JSONView, TableView, StepBar } from "antv-site-demo-rc";
-type DataItem = {
-  date: string;
-  discount_price: number;
-}
-type InsightResult = {
-  insights?: Array<{ [key: string]: any }>;
-};
-type StepType = {
-  title: string;
-  desc: string;
-  content: ReactNode;
-};
 
 const AutoInsightVis: React.FC = () => {
   const data = useMemo(() => [
@@ -141,34 +127,12 @@ const AutoInsightVis: React.FC = () => {
       discount_price: 811.11,
     },
   ],[]);
-  type DataItem = {
-    date: string;
-    discount_price: number;
-  };
-  
-  // type InsightResult = {
-  //   insights?: Array<{ [key: string]: any }>;
-  // };
-  
-  type StepType = {
-    title: string;
-    desc: string;
-    content: ReactNode;};
-  
 
+  const defaultResult: InsightsResult = { insights: [] };
 
-
-  
-  
-  const [result, setResult] = useState<InsightResult>({});
-  //   函数式组件中新建state的方法，setResult是对应更新result的函数
-  console.log("resultresultresultresultresultresultresultresultresult")
-  console.log("resultresultresultresultresultresultresultresultresult", result);
+  const [result, setResult] = useState<InsightsResult>(defaultResult);
   const [insightLoading, setInsightLoading] = useState(true);
-  console.log(insightLoading);
   const [currentStep, setCurrentStep] = useState(0);
-  console.log(currentStep);
-  console.log(result);
   const getMyInsights = async () => {
     if (data) {
       const insightResult:InsightsResult = getInsights(data, {
@@ -177,7 +141,6 @@ const AutoInsightVis: React.FC = () => {
         measures: [{ fieldName: "discount_price", method: "SUM" }],
         visualization: true,
       });
-      console.log("insightResult",insightResult)
       setResult(insightResult);
       setInsightLoading(false);
     }
@@ -186,12 +149,6 @@ const AutoInsightVis: React.FC = () => {
   useEffect(() => {
     getMyInsights();
   }, []);
-  // useEffect(callback, deps?)
-  // useEffect 接收两个参数，第一个是必传的 callback，第二个是选传的 dependencies, 类型为列表。例如 [a, b]。
-  // 可以理解为，每当 dependencies 中的一个或多个元素发生改变时，都会去执行一遍 callback.
-  // 两个特殊情况是：
-  // 1. deps 为空列表 [], 则 callback 只会在组件 mount 时被执行。
-  // 2. 不传入 deps 参数，则每当 state 或者 props 发生变化（组件重新渲染）时，callback 都会被执行。
   const dataContent = <TableView data={data} />;
 
   const insightsContent = (
@@ -203,11 +160,9 @@ const AutoInsightVis: React.FC = () => {
       {result.insights &&
         result.insights.map((insight, index) => {
           console.log("insight",insight)
-          return <InsightCard insightInfo={insight as any} key={index} />;
-          // 有as any问题
+          return <InsightCard insightInfo={insight} key={index} />;
         })}
     </div>
-    // <div></div>
   );
 
   const steps = [
@@ -241,4 +196,3 @@ const AutoInsightVis: React.FC = () => {
   );
 };
 export default AutoInsightVis;
-// ReactDOM.render(<App />, document.getElementById("container"));
